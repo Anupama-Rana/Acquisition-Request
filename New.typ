@@ -1,11 +1,14 @@
 #set text(
-  font: "Monofur Nerd Font",
+   font: "Monofur Nerd Font",
+
   size: 10pt
 )
 
 
 // CONTROL PANEL (Variables)
-#let is_landscape = false
+#let is_landscape = true
+#let use-a4 = true
+#let use-a5 = false
 #let total_rows = if is_landscape{
   25} else { 43}
 #let border_thick = 2pt + black
@@ -51,7 +54,8 @@
 
 // DOT SYMBOL
 #let dot = text(
-  font: "Segoe UI Symbol",
+    font: "Segoe UI Symbol",
+
   size: 4pt,
 )[\u{25CF}]
 
@@ -87,16 +91,21 @@
   width: if is_landscape {100%} else {100%},
   height: if is_landscape {100%} else {100%},
   radius: radius
-)[
+)[#place(
+    left + horizon,
+    dx: -10mm,
+  )[
+    #dot
+  ]
   
   
 // MAIN TABLE
 
 #table(
   columns: if is_landscape {
-    (0.5fr,2.5fr,1fr,1fr,1fr)
+    (0.25fr,2.5fr,1fr,1fr,1fr)
   } else {
-    (0.5fr,2.5fr,1.5fr,1fr,1fr)
+    (0.25fr,2.5fr,1.5fr,1fr,1fr)
   },
   stroke: cell-stroke,
   // HEADER SECTION
@@ -144,16 +153,6 @@ table.cell(..sign_style,..common_style,colspan: 3)[
 ]
 #set page(
   paper: "a5",
-    foreground: [
-    #place(
-      left + horizon,
-      dx:8mm,
-    )[
-      #text(
-        size: 10pt,
-      )[#dot]
-    ]
-  ],
   flipped: is_landscape,
   margin: if is_landscape {
     (top: 0.5cm, left: 2cm, right: 0.5cm, bottom: 0.5cm)
@@ -161,7 +160,84 @@ table.cell(..sign_style,..common_style,colspan: 3)[
     (top: 0.5cm, left: 2cm, right: 0.5cm, bottom: 0.5cm)
   }
 )
+//New
+#if use-a4 and is_landscape [
 
-#content
+  #set page(
+    paper: "a4",
+    flipped: false,
+    
+  )
+  #place(center)[
+  #box[
+    
+    #place(center)[
+      #line(
+         start: (148.5mm,0mm),
+      end: (-148.5mm,0mm),
+      )
+    ]
+  ]
+]
+  
+   #grid(
+  rows: (1fr, 1fr),
 
- 
+  ..range(2).map(i =>
+    box(
+      inset: (
+        top: if i == 0 {0mm} else {0.5cm},
+        bottom: if i == 0 {0.5cm} else {0mm},
+      )
+    )[
+      #content
+    ]
+  )
+)
+
+]else if use-a4 and not is_landscape [
+
+  #set page(
+    paper: "a4",
+    flipped: true)
+
+    #place(center)[
+  #box[
+    
+    #place(center)[
+      #line(
+        start: (0pt, -148mm),
+        end: (0pt, 148mm),
+      )
+    ]
+  ]
+]
+ #grid(
+  columns: (1fr, 1fr),
+
+  ..range(2).map(i =>
+    box(
+      inset: (
+        left: if i == 0 {0mm} else {0.5cm},
+        right: if i == 0 {0.5cm} else {0mm},
+      )
+    )[
+      #content
+    ]
+  )
+)
+    ]else if use-a5 [
+
+  #set page(
+    paper: "a5",
+    flipped: is_landscape,
+  )
+
+  #content
+] else [
+  #align(center+horizon)[
+  #text(
+    size: 40pt,
+  )[Please Choose The Page Size]
+]
+]
