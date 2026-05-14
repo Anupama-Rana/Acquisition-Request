@@ -1,7 +1,6 @@
 #set text(
    font: "Monofur Nerd Font",
-
-  size: 10pt
+   size: 10pt
 )
 
 
@@ -10,7 +9,7 @@
 #let use-a4 = true
 #let use-a5 = false
 #let total_rows = if is_landscape{
-  25} else { 43}
+  15} else { 20}
 #let border_thick = 2pt + black
 #let border_solid  = 1.5pt + black
 #let cell-stroke = 1pt + gray.darken(10%)
@@ -21,14 +20,9 @@
 )
 #let column_header_style = (
   stroke: (left:none, top:border_solid, bottom:border_solid,right:cell-stroke),
-  
 )
-
 #let body_style = (
   stroke: (left:none,bottom:cell-stroke,right:cell-stroke,top:none),
-
-
-  
 )
 #let last_hcolumn_style = (
   stroke:(left:none,top:none,bottom:border_solid,right:cell-stroke),
@@ -36,7 +30,6 @@
 )
 #let last_bcolumn_style = (
   stroke: (left:cell-stroke,right:none,top:none,bottom:cell-stroke),
-  
 )
 #let footer_style = (
   stroke: (left:none,right:none,bottom:border_solid,top:border_solid),
@@ -50,8 +43,6 @@
   align: center + horizon,
 )
 
-
-
 // DOT SYMBOL
 #let dot = text(
     font: "Segoe UI Symbol",
@@ -61,7 +52,6 @@
 
 
 // EMPTY ROW GENERATOR
-
 #let empty-row() = if is_landscape{
     (
       table.cell(..body_style)[],
@@ -84,7 +74,6 @@
 
 
 // OUTER box
-
 #let content = box(
   stroke: border_thick,
   inset:0.5mm,
@@ -100,13 +89,13 @@
   
   
 // MAIN TABLE
-
 #table(
   columns: if is_landscape {
     (0.25fr,2.5fr,1fr,1fr,1fr)
   } else {
     (0.25fr,2.5fr,1.5fr,1fr,1fr)
   },
+  rows:(1.5fr,1.2fr,1fr),
   stroke: cell-stroke,
   // HEADER SECTION
 
@@ -135,16 +124,15 @@
   },
   
   //FOOTER
-  
-  table.cell(..footer_style,colspan:5)[Remarks],
-  table.cell(..sign_style,colspan:5)[],
-  table.cell(..sign_style,..common_style,colspan: 2)[
+  table.cell(..footer_style,colspan:5,rowspan:2)[Remarks],
+ 
+  table.cell(..sign_style,..common_style,colspan: 2,rowspan: 2)[
      #v(4mm)
     #line(length: 50%)
      #v(-3mm)
   Requested By],
 
-table.cell(..sign_style,..common_style,colspan: 3)[
+table.cell(..sign_style,..common_style,colspan: 3,rowspan: 2)[
    #v(4mm)
     #line(length: 50%)
      #v(-3mm)
@@ -154,11 +142,8 @@ table.cell(..sign_style,..common_style,colspan: 3)[
 #set page(
   paper: "a5",
   flipped: is_landscape,
-  margin: if is_landscape {
-    (top: 0.5cm, left: 2cm, right: 0.5cm, bottom: 0.5cm)
-  } else {
-    (top: 0.5cm, left: 2cm, right: 0.5cm, bottom: 0.5cm)
-  }
+  margin:0mm
+ 
 )
 //New
 #if use-a4 and is_landscape [
@@ -168,60 +153,61 @@ table.cell(..sign_style,..common_style,colspan: 3)[
     flipped: false,
     
   )
-  #place(center)[
-  #box[
-    
-    #place(center)[
-      #line(
-         start: (148.5mm,0mm),
-      end: (-148.5mm,0mm),
-      )
-    ]
-  ]
-]
+
   
-   #grid(
-  rows: (1fr, 1fr),
+ #grid(
+  columns: (1fr),
+  rows:(1fr,1fr),
+  stroke: (
+    left:none,
+   right:none,
+   top:none,
+   bottom: (
+      paint: black,
+      thickness: 1pt,
+      dash: "dashed",
+    ),
+   ),
+  inset:(
+    left:2cm,
+    right:0.5cm,
+    top:0.5cm,
+    bottom:0.5cm
+  ),
 
   ..range(2).map(i =>
-    box(
-      inset: (
-        top: if i == 0 {0mm} else {0.5cm},
-        bottom: if i == 0 {0.5cm} else {0mm},
-      )
-    )[
+    [
       #content
     ]
   )
 )
 
-]else if use-a4 and not is_landscape [
+] else if use-a4 and not is_landscape [
 
   #set page(
     paper: "a4",
-    flipped: true)
-
-    #place(center)[
-  #box[
-    
-    #place(center)[
-      #line(
-        start: (0pt, -148mm),
-        end: (0pt, 148mm),
-      )
-    ]
-  ]
-]
+    flipped: true,
+  )
  #grid(
   columns: (1fr, 1fr),
+  rows:(1fr),
+  stroke: (left:none,
+   right: (
+      paint: black,
+      thickness: 1pt,
+      dash: "dashed",
+    ),
+   top:none,
+   bottom:none),
+  inset:(
+    left:2cm,
+    right:0.5cm,
+    top:0.5cm,
+    bottom:0.5cm
+  ),
 
   ..range(2).map(i =>
-    box(
-      inset: (
-        left: if i == 0 {0mm} else {0.5cm},
-        right: if i == 0 {0.5cm} else {0mm},
-      )
-    )[
+    [
       #content
     ]
   )
@@ -232,8 +218,20 @@ table.cell(..sign_style,..common_style,colspan: 3)[
     paper: "a5",
     flipped: is_landscape,
   )
+   #grid(
+  columns: (1fr),
+  rows:(1fr),
+  inset:(
+    left:2cm,
+    right:0.5cm,
+    top:0.5cm,
+    bottom:0.5cm),
+[ #content
+    ]
+  
+)
 
-  #content
+ 
 ] else [
   #align(center+horizon)[
   #text(
